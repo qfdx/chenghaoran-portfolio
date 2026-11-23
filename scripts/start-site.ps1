@@ -16,6 +16,7 @@ Set-Location $ProjectRoot
 . (Join-Path $PSScriptRoot 'toolpaths.ps1')
 $NODE = Find-Tool 'node.exe'
 if (-not $NODE) { Write-Host '[site] 找不到 node.exe' -ForegroundColor Red; Read-Host '按回车退出'; exit 1 }
+$env:PATH = (Split-Path -Parent $NODE) + ';' + $env:PATH
 
 foreach ($dup in @('http_proxy', 'https_proxy', 'all_proxy')) {
   try { Remove-Item ('Env:' + $dup) -ErrorAction SilentlyContinue } catch {}

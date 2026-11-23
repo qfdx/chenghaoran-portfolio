@@ -8,8 +8,10 @@ $LogDir = Join-Path $ProjectRoot '.workbuddy\logs'
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 Set-Location $ProjectRoot
 . (Join-Path $PSScriptRoot 'toolpaths.ps1')
+$NODE = Find-Tool 'node.exe'
 $NPX = Find-Tool 'npx.cmd'
 if (-not $NPX) { Write-Host '[deploy] 找不到 npx.cmd' -ForegroundColor Red; Read-Host '按回车退出'; exit 1 }
+$env:PATH = (Split-Path -Parent $NODE) + ';' + $env:PATH
 
 function Info($m) { Write-Host ('[deploy] ' + $m) -ForegroundColor DarkGray }
 function Good($m) { Write-Host ('[deploy] ' + $m) -ForegroundColor Green }

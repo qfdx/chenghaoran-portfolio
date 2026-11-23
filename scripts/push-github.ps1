@@ -9,8 +9,10 @@ $ToolsDir = Join-Path $ProjectRoot '.workbuddy\tools'
 New-Item -ItemType Directory -Force -Path $ToolsDir | Out-Null
 Set-Location $ProjectRoot
 . (Join-Path $PSScriptRoot 'toolpaths.ps1')
+$NODE = Find-Tool 'node.exe'
 $GIT = Find-Tool 'git.exe'
 if (-not $GIT) { Write-Host '[github] 找不到 git.exe' -ForegroundColor Red; Read-Host '按回车退出'; exit 1 }
+$env:PATH = (Split-Path -Parent $NODE) + ';' + $env:PATH
 
 function Info($m) { Write-Host ('[github] ' + $m) -ForegroundColor DarkGray }
 function Good($m) { Write-Host ('[github] ' + $m) -ForegroundColor Green }
