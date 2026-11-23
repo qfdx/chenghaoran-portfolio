@@ -13,6 +13,9 @@ $LogDir = Join-Path $ProjectRoot '.workbuddy\logs'
 $Cloudflared = Join-Path $ToolsDir 'cloudflared.exe'
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 Set-Location $ProjectRoot
+. (Join-Path $PSScriptRoot 'toolpaths.ps1')
+$NODE = Find-Tool 'node.exe'
+if (-not $NODE) { Write-Host '[site] 找不到 node.exe' -ForegroundColor Red; Read-Host '按回车退出'; exit 1 }
 
 foreach ($dup in @('http_proxy', 'https_proxy', 'all_proxy')) {
   try { Remove-Item ('Env:' + $dup) -ErrorAction SilentlyContinue } catch {}
@@ -46,7 +49,7 @@ function Start-Server {
   Info '启动本地服务...'
   $env:HOST = '0.0.0.0'
   $sp = @{
-    FilePath               = 'node'
+    FilePath               = $NODE
     ArgumentList           = @('scripts/serve-prod.mjs')
     WorkingDirectory       = $ProjectRoot
     WindowStyle            = 'Hidden'

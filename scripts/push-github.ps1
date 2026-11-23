@@ -8,6 +8,9 @@ $RepoName = 'chenghaoran-portfolio'
 $ToolsDir = Join-Path $ProjectRoot '.workbuddy\tools'
 New-Item -ItemType Directory -Force -Path $ToolsDir | Out-Null
 Set-Location $ProjectRoot
+. (Join-Path $PSScriptRoot 'toolpaths.ps1')
+$GIT = Find-Tool 'git.exe'
+if (-not $GIT) { Write-Host '[github] 找不到 git.exe' -ForegroundColor Red; Read-Host '按回车退出'; exit 1 }
 
 function Info($m) { Write-Host ('[github] ' + $m) -ForegroundColor DarkGray }
 function Good($m) { Write-Host ('[github] ' + $m) -ForegroundColor Green }
@@ -75,9 +78,9 @@ $user = (& $gh api user --jq .login).Trim()
 Info ('当前 GitHub 账号: ' + $user)
 
 # 统一分支名为 main（Cloudflare Pages 默认构建分支）
-& git branch -M main 2>$null
-& git add -A 2>$null
-& git commit -q -m 'feat: personal portfolio site' --allow-empty 2>$null
+& $GIT branch -M main 2>$null
+& $GIT add -A 2>$null
+& $GIT commit -q -m 'feat: personal portfolio site' --allow-empty 2>$null
 
 $repoFull = $user + '/' + $RepoName
 & $gh repo view $repoFull *> $null
@@ -93,9 +96,9 @@ if (-not $already) {
   Info ('仓库已存在: ' + $repoFull + '，直接推送')
 }
 
-& git remote remove origin 2>$null
-& git remote add origin ('https://github.com/' + $repoFull + '.git')
-& git push -u origin main --force
+& $GIT remote remove origin 2>$null
+& $GIT remote add origin ('https://github.com/' + $repoFull + '.git')
+& $GIT push -u origin main --force
 $ok = ($LASTEXITCODE -eq 0)
 
 if ($ok) {
